@@ -1,0 +1,19 @@
+@model BioLinkWeb.Models.UserProfile
+
+<h2>Profile Settings</h2>
+
+<form asp-action="Save" method="post">
+    <div>
+        <label>Name</label>
+        <input asp-for="DisplayName" class="form-control"/>
+    </div>
+    <div>
+        <label>Bio</label>
+        <textarea asp-for="Bio" class="form-control"></textarea>
+    </div>
+    <div>
+        <label>Profile Image URL</label>
+        <input asp-for="ProfileImageUrl" class="form-control"/>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Save</button>
+</form>

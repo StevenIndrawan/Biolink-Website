@@ -1,0 +1,23 @@
+@model IEnumerable<BioLinkWeb.Models.UserLink>
+
+<h2>Your Links</h2>
+<a asp-action="Create" class="btn btn-success">Add New Link</a>
+
+<table class="table mt-2">
+    <tr>
+        <th>Title</th>
+        <th>URL</th>
+        <th>Action</th>
+    </tr>
+    @foreach(var link in Model)
+    {
+        <tr>
+            <td>@link.Title</td>
+            <td>@link.Url</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@link.Id" class="btn btn-sm btn-warning">Edit</a>
+                <a asp-action="Delete" asp-route-id="@link.Id" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
