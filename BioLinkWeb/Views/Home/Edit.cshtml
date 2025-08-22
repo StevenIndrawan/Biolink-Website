@@ -1,0 +1,11 @@
+@model BioLinkApp.Models.ApplicationUser
+<h2>Edit Profile</h2>
+<form method="post">
+    <label asp-for="DisplayName"></label>
+    <input asp-for="DisplayName" />
+    <label asp-for="Bio"></label>
+    <textarea asp-for="Bio"></textarea>
+    <label asp-for="AvatarUrl"></label>
+    <input asp-for="AvatarUrl" />
+    <button type="submit">Save</button>
+</form>
