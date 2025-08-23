@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - BioLink</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+        /* Gradasi warna */
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 30px;
+        width: 360px;
+        text-align: center;
+        color: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        margin-bottom: 15px;
+    }
+    .links a {
+        display: block;
+        margin: 10px 0;
+        padding: 12px;
+        background: white;
+        border-radius: 12px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #333;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .links a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+    .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #eee;
+    }
+    .profile-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+    object-fit: cover;
+    }
+</style>
+
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

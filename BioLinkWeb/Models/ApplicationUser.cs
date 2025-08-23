@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace BioLinkApp.Models
+namespace BioLinkWeb.Models
 {
     public class ApplicationUser : IdentityUser
     {
         public string? DisplayName { get; set; }
         public string? Bio { get; set; }
-        public string? AvatarUrl { get; set; }
-
-        public ICollection<Link> Links { get; set; } = new List<Link>();
+        public string? ProfileImageUrl { get; set; }
+        public string? Background { get; set; }
+        public bool IsPublic { get; set; } = true;
+        public List<Link> Links { get; set; } = new();
     }
 }

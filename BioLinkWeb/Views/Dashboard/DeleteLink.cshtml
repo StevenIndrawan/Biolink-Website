@@ -1,0 +1,8 @@
+@model BioLinkWeb.Models.Link
+<h2>Hapus Link</h2>
+<p>Yakin mau hapus link <strong>@Model.Title</strong>?</p>
+<form asp-action="DeleteLink" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit">Ya, hapus</button>
+    <a href="/Dashboard/Links">Batal</a>
+</form>

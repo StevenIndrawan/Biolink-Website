@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "qrMbola4tYLD2MzUEa/mJxdZkvuBcBZhmow1LY5BaHE=",
+  "Hash": "YzhaPcuZeo8r+mlSZLcIkwEaCrYVWZB7e3ax7Wx1Nb0=",
   "Source": "BioLinkWeb",
   "BasePath": "_content/BioLinkWeb",
   "Mode": "Default",
@@ -16,6 +16,25 @@
     }
   ],
   "Assets": [
+    {
+      "Identity": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\css\\biolink.css",
+      "SourceId": "BioLinkWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\",
+      "BasePath": "_content/BioLinkWeb",
+      "RelativePath": "css/biolink.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\biolink.css"
+    },
     {
       "Identity": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\css\\site.css",
       "SourceId": "BioLinkWeb",
@@ -129,6 +148,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\banner3.svg"
+    },
+    {
+      "Identity": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\images\\profile.png",
+      "SourceId": "BioLinkWeb",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\",
+      "BasePath": "_content/BioLinkWeb",
+      "RelativePath": "images/profile.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\profile.png"
     },
     {
       "Identity": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\js\\site.js",

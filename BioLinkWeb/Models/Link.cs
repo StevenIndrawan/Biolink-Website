@@ -1,26 +1,29 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BioLinkApp.Models
+namespace BioLinkWeb.Models
 {
     public class Link
     {
         [Key]
         public int Id { get; set; }
 
-        [Required, MaxLength(200)]
+        [Required]
         public string Title { get; set; } = string.Empty;
 
-        [Required, Url]
+        [Required]
         public string Url { get; set; } = string.Empty;
 
-        public int SortOrder { get; set; }
+        public int Order { get; set; } = 0;
 
-        // foreign key ke user
+        // 🔹 Tambahkan property Icon (opsional)
+        public string? Icon { get; set; }
+
+        // Foreign Key ke ApplicationUser
         [Required]
-        public string UserId { get; set; } = string.Empty;
+        public string UserId { get; set; }
 
-        [ForeignKey(nameof(UserId))]
-        public ApplicationUser? User { get; set; }
+        [ForeignKey("UserId")]
+        public virtual ApplicationUser User { get; set; }
     }
 }

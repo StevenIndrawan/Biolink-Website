@@ -1,43 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BioLinkWeb.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using BioLinkWeb.Models;
+using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public HomeController(UserManager<ApplicationUser> userManager)
         {
-            return View();
+            _userManager = userManager;
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> Edit()
         {
-            ViewData["Message"] = "Your application description page.";
+            // Ambil user yang sedang login
+            var user = await _userManager.GetUserAsync(User);
 
-            return View();
+            if (user == null)
+                return RedirectToAction("Login", "Account"); // atau ke halaman login
+
+            return View(user); // ✅ return ApplicationUser
         }
 
-        public IActionResult Contact()
+        [HttpPost]
+        public async Task<IActionResult> Edit(ApplicationUser model, IFormFile? profileImage)
         {
-            ViewData["Message"] = "Your contact page.";
+            var user = await _userManager.GetUserAsync(User);
 
-            return View();
-        }
+            if (user == null)
+                return RedirectToAction("Login", "Account");
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            // Update basic profile
+            user.DisplayName = model.DisplayName;
+            user.Bio = model.Bio;
+            user.Background = model.Background;
+            user.IsPublic = model.IsPublic;
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // Upload foto profil kalau ada
+            if (profileImage != null && profileImage.Length > 0)
+            {
+                var fileName = $"{Guid.NewGuid()}_{profileImage.FileName}";
+                var filePath = Path.Combine("wwwroot/images/profiles", fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profileImage.CopyToAsync(stream);
+                }
+
+                user.ProfileImageUrl = $"/images/profiles/{fileName}";
+            }
+
+            await _userManager.UpdateAsync(user);
+
+            return RedirectToAction("Edit");
         }
     }
 }

@@ -1,0 +1,29 @@
+@model BioLinkWeb.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Profile Settings";
+}
+<h2>Profile Settings</h2>
+
+<form asp-action="Profile" method="post">
+    <div>
+        <label>Display Name</label>
+        <input asp-for="DisplayName" class="form-control" />
+    </div>
+    <div>
+        <label>Bio</label>
+        <textarea asp-for="Bio" class="form-control"></textarea>
+    </div>
+    <div>
+        <label>Profile Image URL</label>
+        <input asp-for="ProfileImageUrl" class="form-control" />
+    </div>
+    <div>
+        <label>Background</label>
+        <input asp-for="Background" class="form-control" />
+    </div>
+    <div>
+        <label>Public?</label>
+        <input asp-for="IsPublic" type="checkbox" />
+    </div>
+    <button type="submit">Save</button>
+</form>

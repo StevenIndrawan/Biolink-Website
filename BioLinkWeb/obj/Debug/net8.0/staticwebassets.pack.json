@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\css\\biolink.css",
+      "PackagePath": "staticwebassets\\css\\biolink.css"
+    },
+    {
       "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
@@ -23,6 +27,10 @@
     {
       "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\images\\banner3.svg",
       "PackagePath": "staticwebassets\\images\\banner3.svg"
+    },
+    {
+      "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\images\\profile.png",
+      "PackagePath": "staticwebassets\\images\\profile.png"
     },
     {
       "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\js\\site.js",

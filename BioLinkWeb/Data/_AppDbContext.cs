@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using BioLinkApp.Models;
+using BioLinkWeb.Models;
 
-namespace BioLinkApp.Data
+namespace BioLinkWeb.Data
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser>
+    public class _AppDbContext : IdentityDbContext<ApplicationUser>
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public _AppDbContext(DbContextOptions<_AppDbContext> options) : base(options) { }
 
-        public DbSet<Link> Links { get; set; } = default!;
+        public DbSet<Link> Links { get; set; }
     }
 }
