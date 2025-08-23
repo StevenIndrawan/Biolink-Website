@@ -33,10 +33,13 @@
                     </li>
                 </ul>
 
-                <!-- Login Partial (kanan) -->
+                <!-- Tombol Settings (kanan navbar) -->
                 <div class="d-flex">
-                    <partial name="_LoginPartial" />
+                    <a class="btn btn-outline-light" asp-controller="Biolink" asp-action="Settings">⚙️ Settings</a>
                 </div>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">📊 Dashboard</a>
+                </li>
             </div>
         </div>
     </nav>

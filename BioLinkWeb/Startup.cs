@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using BioLinkWeb.Data;
 
 namespace BioLinkWeb
 {
@@ -13,13 +15,14 @@ namespace BioLinkWeb
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
-            // kalau ada logic environment, gunakan `env.EnvironmentName`
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            // tambahkan Identity, DbContext, dsb di sini
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlite("Data Source=biolink.db"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -39,14 +42,19 @@ namespace BioLinkWeb
 
             app.UseRouting();
 
-            app.UseAuthentication(); // kalau pakai Identity
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "dashboard",
+                    pattern: "Dashboard/{action=Index}/{id?}",
+                    defaults: new { controller = "Dashboard" });
+
+                endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Biolink}/{action=Index}/{id?}");
             });
         }
     }

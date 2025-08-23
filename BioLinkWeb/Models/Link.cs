@@ -16,10 +16,8 @@ namespace BioLinkWeb.Models
 
         public int Order { get; set; } = 0;
 
-        // 🔹 Tambahkan property Icon (opsional)
         public string? Icon { get; set; }
 
-        // Foreign Key ke ApplicationUser
         [Required]
         public string UserId { get; set; }
 
