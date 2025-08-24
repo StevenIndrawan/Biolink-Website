@@ -1,0 +1,11 @@
+@model BioLinkWeb.Models.UserViewModel
+
+<div class="container mt-4">
+    <h2>Hapus User</h2>
+    <p>Apakah Anda yakin ingin menghapus user <strong>@Model.DisplayName</strong>?</p>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Hapus</button>
+        <a asp-action="Index" class="btn btn-secondary">Batal</a>
+    </form>
+</div>

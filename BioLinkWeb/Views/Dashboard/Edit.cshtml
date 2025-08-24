@@ -1,0 +1,40 @@
+@model BioLinkWeb.Models.UserViewModel
+
+<div class="container mt-4">
+    <h2>Edit User</h2>
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Display Name</label>
+            <input asp-for="DisplayName" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input asp-for="UserName" class="form-control" readonly />
+            <small class="text-muted">Username tidak bisa diubah.</small>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Bio</label>
+            <textarea asp-for="Bio" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select asp-for="IsActive" class="form-select">
+                <option value="true" selected="@(Model.IsActive ? "selected" : null)">Active</option>
+                <option value="false" selected="@(Model.IsActive ? null : "selected")">Inactive</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+        <a asp-action="Index" class="btn btn-secondary">Batal</a>
+    </form>
+</div>

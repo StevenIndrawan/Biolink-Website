@@ -66,12 +66,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmlvbGlua1xTZXR0aW5ncy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/CreateLink.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXENyZWF0ZUxpbmsuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/DeleteLink.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXERlbGV0ZUxpbmsuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFzaGJvYXJkXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Dashboard/EditLink.cshtml]
@@ -140,6 +152,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Shared/_CookieConsentPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Db29raWVDb25zZW50UGFydGlhbC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Shared/_DashboardCreateLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9EYXNoYm9hcmRDcmVhdGVMYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Steven/Source/Biolink-Website/BioLinkWeb/Views/Shared/_DashboardLayout.cshtml]
