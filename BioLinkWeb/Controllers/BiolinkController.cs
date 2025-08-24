@@ -35,10 +35,15 @@ namespace BioLinkWeb.Controllers
                 UserStore.CurrentUser = user;
             }
 
-            // validasi username
-            if (!user.IsPublic || !string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase))
+            // validasi username & visibility
+            if (!string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase))
             {
                 return NotFound();
+            }
+
+            if (!user.IsPublic)
+            {
+                return NotFound(); // 🔒 private → 404
             }
 
             return View(user);
@@ -54,6 +59,7 @@ namespace BioLinkWeb.Controllers
                 Bio = UserStore.CurrentUser.Bio,
                 ProfileImageUrl = UserStore.CurrentUser.ProfileImageUrl,
                 Background = UserStore.CurrentUser.Background,
+                IsPublic = UserStore.CurrentUser.IsPublic, // ✅ ambil status public/private
                 Links = UserStore.CurrentUser.Links
             };
 
@@ -74,6 +80,7 @@ namespace BioLinkWeb.Controllers
             UserStore.CurrentUser.Bio = model.Bio;
             UserStore.CurrentUser.ProfileImageUrl = model.ProfileImageUrl;
             UserStore.CurrentUser.Background = model.Background;
+            UserStore.CurrentUser.IsPublic = model.IsPublic; // ✅ simpan setting
             UserStore.CurrentUser.Links = model.Links ?? new List<Link>();
 
             TempData["Message"] = "Profile berhasil disimpan!";

@@ -1,75 +1,146 @@
 ﻿@page
-@model RegisterModel
+@model BioLinkWeb.Areas.Identity.Pages.Account.RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    Layout = null;
 }
 
-<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary">📝 Buat akun Anda</h2>
-            <p class="text-muted">Bergabunglah dengan kami dan mulailah hari ini.</p>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+        .register-box {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 380px;
+            animation: fadeIn 0.6s ease-in-out;
+        }
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+        .register-box h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .register-box h2 span {
+            font-size: 1.8rem;
+            margin-right: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+        }
+
+        button {
+            width: 100%;
+            background: #3b82f6;
+            color: #fff;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        .login-link {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .login-link a {
+            color: #3b82f6;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h2><span>📝</span> Register</h2>
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="Input.UserName">Username</label>
+                <input asp-for="Input.UserName" type="text" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Input.Email">Email</label>
+                <input asp-for="Input.Email" type="email" />
                 <span asp-validation-for="Input.Email" class="text-danger"></span>
             </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" type="password" />
+            <div class="form-group">
                 <label asp-for="Input.Password">Password</label>
+                <input asp-for="Input.Password" type="password" />
                 <span asp-validation-for="Input.Password" class="text-danger"></span>
             </div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="confirm password" type="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
+            <div class="form-group">
+                <label asp-for="Input.ConfirmPassword">Konfirmasi Password</label>
+                <input asp-for="Input.ConfirmPassword" type="password" />
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
-
-            <button id="registerSubmit" type="submit" class="btn btn-primary w-100 rounded-pill btn-lg shadow-sm">
-                Registrasi
-            </button>
+            <button type="submit">Daftar</button>
+            <div class="login-link">
+                Sudah punya akun? <a asp-page="./Login">Login di sini</a>
+            </div>
         </form>
-
-        <hr class="my-4" />
-
-        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
-        {
-            <div class="text-center">
-                <p class="text-muted">Atau daftar dengan:</p>
-                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                    @foreach (var provider in Model.ExternalLogins!)
-                    {
-                        <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill mb-2" 
-                                name="provider" value="@provider.Name" 
-                                title="Register using your @provider.DisplayName account">
-                            @provider.DisplayName
-                        </button>
-                    }
-                </form>
-            </div>
-        }
-        else
-        {
-            <div class="text-center text-muted small">
-                <p>Tidak ada layanan autentikasi eksternal yang dikonfigurasi.</p>
-            </div>
-        }
-
-        <div class="text-center mt-3">
-            <p class="text-muted">Sudah punya akun?
-                <a asp-page="./Login" class="text-decoration-none fw-bold">Masuk</a>
-            </p>
-        </div>
     </div>
-</div>
-
-@section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+</body>
+</html>

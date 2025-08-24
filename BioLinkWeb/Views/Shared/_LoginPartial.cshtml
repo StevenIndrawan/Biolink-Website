@@ -1,29 +1,26 @@
-@using Microsoft.AspNetCore.Identity
-@using BioLinkWeb.Models
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 <ul class="navbar-nav ms-auto">
-    @if (SignInManager.IsSignedIn(User))
+    @if (HttpContextAccessor.HttpContext.Session.GetString("Username") != null)
     {
-        <li class="nav-item d-flex align-items-center me-2">
-            <span class="nav-link text-light">
-                👋 Hello, @User.Identity?.Name
-            </span>
+        <li class="nav-item">
+            <span class="nav-link">👤 @HttpContextAccessor.HttpContext.Session.GetString("Username")</span>
         </li>
         <li class="nav-item">
-            <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
-                <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
-            </form>
+            <a class="nav-link" asp-controller="Biolink" asp-action="Settings">⚙️ Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Dashboard" asp-action="Index">📊 Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-danger" asp-controller="Auth" asp-action="Logout">Logout</a>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="btn btn-outline-light" asp-controller="Auth" asp-action="Login">Login</a>
         </li>
     }
 </ul>

@@ -12,6 +12,7 @@ namespace BioLinkWeb.Models
         public bool IsPublic { get; set; } = true;
         public List<Link> Links { get; set; } = new(); 
         public bool IsActive { get; set; } = true;
+        public bool IsBioPublic { get; set; } = true;
         
     }
 }

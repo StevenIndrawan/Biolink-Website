@@ -8,7 +8,6 @@ namespace BioLinkWeb.Models
         public string Email { get; set; }
         public string Bio { get; set; }
         public bool IsActive { get; set; }
-        // Tambahkan alias biar view bisa pakai Username
         public string Username => UserName;
     }
 }

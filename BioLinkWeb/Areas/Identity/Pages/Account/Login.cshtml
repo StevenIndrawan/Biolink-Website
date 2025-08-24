@@ -1,82 +1,122 @@
 ﻿@page
-@model LoginModel
-
+@model BioLinkWeb.Areas.Identity.Pages.Account.LoginModel
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Masuk";
+    Layout = null;
 }
 
-<div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-    <div class="card shadow-lg p-4" style="width: 400px; border-radius: 15px;">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary">Selamat Datang</h2>
-            <p class="text-muted">Silakan masuk untuk melanjutkan</p>
-        </div>
-
-        <form id="account" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control rounded-pill" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #4e73df, #1cc88a);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .card {
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .card-header {
+            border-top-left-radius: 1rem !important;
+            border-top-right-radius: 1rem !important;
+        }
+        .btn-primary {
+            background: #2563eb;
+            border: none;
+            transition: 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: #1e40af;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+        }
+        .toggle-password {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="col-md-5">
+        <div class="card border-0">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h3 class="mb-0"><i class="bi bi-person-circle me-2"></i>Selamat Datang Kembali</h3>
             </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" type="password" class="form-control rounded-pill" autocomplete="current-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    <input class="form-check-input" asp-for="Input.RememberMe" />
-                    <label asp-for="Input.RememberMe" class="form-check-label"></label>
-                </div>
-                <a id="forgot-password" asp-page="./ForgotPassword" class="small text-decoration-none">Lupa Password?</a>
-            </div>
-
-            <button id="login-submit" type="submit" class="btn btn-primary w-100 rounded-pill btn-lg shadow-sm">Masuk</button>
-
-            <div class="text-center mt-3">
-                <span class="text-muted">Tidak punya akun?</span>
-                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="fw-bold text-decoration-none"> Daftar</a>
-            </div>
-
-            <div class="text-center mt-2">
-                <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="small text-decoration-none">Kirim ulang konfirmasi email</a>
-            </div>
-        </form>
-
-        <hr class="my-4" />
-        <div class="text-center">
-            <p class="text-muted">Atau lanjutkan dengan</p>
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <p class="small text-muted">
-                        Tidak ada login eksternal yang dikonfigurasi. <a href="https://go.microsoft.com/fwlink/?LinkID=532715">Pelajari lebih lanjut</a>
-                    </p>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                        <div class="d-flex justify-content-center gap-2">
-                            @foreach (var provider in Model.ExternalLogins!)
-                            {
-                                <button type="submit" class="btn btn-outline-secondary rounded-pill px-3" 
-                                        name="provider" value="@provider.Name" 
-                                        title="Log in using your @provider.DisplayName account">
-                                    @provider.DisplayName
-                                </button>
-                            }
+                    <!-- Username atau Email -->
+                    <div class="mb-3">
+                        <label asp-for="Input.UserNameOrEmail" class="form-label">Nama Pengguna atau Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Input.UserNameOrEmail" class="form-control" placeholder="Masukkan nama pengguna atau email" />
                         </div>
-                    </form>
-                }
-            }
+                        <span asp-validation-for="Input.UserNameOrEmail" class="text-danger"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label">Kata Sandi</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input asp-for="Input.Password" type="password" class="form-control" placeholder="Masukkan kata sandi" id="passwordInput" />
+                            <span class="input-group-text toggle-password" onclick="togglePassword()">
+                                <i class="bi bi-eye"></i>
+                            </span>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- Ingat Saya -->
+                    <div class="form-check mb-3">
+                        <input asp-for="Input.RememberMe" class="form-check-input" />
+                        <label asp-for="Input.RememberMe" class="form-check-label">Ingat saya</label>
+                    </div>
+
+                    <!-- Tombol Login -->
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
+                    </button>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-light">
+                <p class="mb-1">
+                    <a asp-page="./ForgotPassword">Lupa kata sandi?</a>
+                </p>
+                <p>
+                    Belum punya akun?
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Daftar</a>
+                </p>
+            </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("passwordInput");
+            const toggleIcon = document.querySelector(".toggle-password i");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

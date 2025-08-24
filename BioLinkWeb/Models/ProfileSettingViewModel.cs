@@ -15,5 +15,8 @@ namespace BioLinkWeb.Models
         public string Background { get; set; }
 
         public List<Link> Links { get; set; } = new List<Link>();
+        public bool IsPublic { get; set; } = true;  // ✅ tambah
+        public string Visibility { get; set; } = "public";
+
     }
 }

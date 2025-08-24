@@ -30,6 +30,7 @@
         }
 
         .profile-card {
+            position: relative;
             background: rgba(255,255,255,0.08);
             border-radius: 20px;
             padding: 25px;
@@ -47,6 +48,30 @@
             margin-bottom: 15px;
             object-fit: cover;
             border: 3px solid rgba(255,255,255,0.5);
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e74c3c;
+            border: none;
+            color: white;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
         }
 
         .profile-card h2 {
@@ -104,7 +129,6 @@
             font-size: 18px;
         }
 
-        /* Warna default icon bg */
         .links a.website .icon { background: #000; color: #fff; }
         .links a.instagram .icon { background: #E1306C; color: #fff; }
         .links a.twitter .icon { background: #1DA1F2; color: #fff; }
@@ -117,36 +141,14 @@
             color: #ddd;
             margin-top: 20px;
         }
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-
-        .btn-secondary {
-            background: #2ecc71;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #27ae60;
-        }
     </style>
 </head>
 <body>
     <div class="profile-card">
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+            <button type="submit" class="logout-btn" title="Logout">⏻</button>
+        </form>
+
         <img src="@Model.ProfileImageUrl" alt="@Model.DisplayName" />
 
         <h2>@Model.DisplayName</h2>
@@ -157,7 +159,7 @@
             <div class="links">
                 @foreach (var link in Model.Links.OrderBy(l => l.Order))
                 {
-                    var cssClass = link.Title.ToLower(); // biar bisa pakai class warna
+                    var cssClass = link.Title.ToLower();
                     <a href="@link.Url" target="_blank" class="@cssClass">
                         <span class="icon">@link.Icon</span>
                         <span>@link.Title</span>
@@ -173,6 +175,7 @@
         <div class="footer">
             BioLink ini Didukung Oleh @Model.DisplayName
         </div>
+
         <div style="margin-top:20px; text-align:center;">
             <a asp-controller="Biolink" asp-action="Settings" style="
                 display:inline-block;

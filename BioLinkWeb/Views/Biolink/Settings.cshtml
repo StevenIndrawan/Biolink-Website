@@ -33,7 +33,7 @@
         background: rgba(255,255,255,0.08);
         border-radius: 20px;
         padding: 30px;
-        max-width: 420px; /* diperbaiki biar tidak terlalu lebar */
+        max-width: 420px;
         width: 100%;
         backdrop-filter: blur(12px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.25);
@@ -78,44 +78,44 @@
     }
 
     form .form-group {
-    margin-bottom: 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Biar input di tengah */
-}
+        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-form label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #eee;
-    margin-bottom: 6px;
-    width: 100%;
-    max-width: 400px;
-    text-align: left;
-}
+    form label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #eee;
+        margin-bottom: 6px;
+        width: 100%;
+        max-width: 400px;
+        text-align: left;
+    }
 
-form input, form textarea {
-    width: 100%;
-    max-width: 400px;   /* Batasi agar tidak terlalu panjang */
-    padding: 12px 14px;
-    border-radius: 12px;
-    border: none;
-    outline: none;
-    font-size: 14px;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    backdrop-filter: blur(6px);
-    transition: 0.2s;
-}
+    form input, form textarea {
+        width: 100%;
+        max-width: 400px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        background: rgba(255,255,255,0.15);
+        color: white;
+        backdrop-filter: blur(6px);
+        transition: 0.2s;
+    }
 
-form input:focus, form textarea:focus {
-    background: rgba(255,255,255,0.28);
-    box-shadow: 0 0 0 2px rgba(255,255,255,0.35);
-}
+    form input:focus, form textarea:focus {
+        background: rgba(255,255,255,0.28);
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.35);
+    }
 
-textarea {
-    resize: none;
-}
+    textarea {
+        resize: none;
+    }
 
     .accordion-header {
         background: rgba(255,255,255,0.15);
@@ -145,7 +145,7 @@ textarea {
     }
 
     .accordion-content.active {
-        max-height: 500px; /* cukup besar untuk konten */
+        max-height: 500px;
         padding: 12px;
     }
 
@@ -180,8 +180,7 @@ textarea {
     .back-btn:hover {
         text-decoration: underline;
     }
-</style>
-
+    </style>
 </head>
 <body>
     <div class="profile-card">
@@ -217,6 +216,26 @@ textarea {
                 <label>Background (CSS Gradient)</label>
                 <input asp-for="Background" />
             </div>
+
+            <div class="form-group">
+                <label>Profil Visibility</label>
+                <div style="display:flex; gap:15px; color:#eee;">
+                    <label>
+                        <input type="radio" name="IsPublic" value="true"
+                            @(Model.IsPublic ? "checked=\"checked\"" : "") />
+                        Public
+                    </label>
+                    <label>
+                        <input type="radio" name="IsPublic" value="false"
+                            @(!Model.IsPublic ? "checked=\"checked\"" : "") />
+                        Private
+                    </label>
+                </div>
+                <small style="color:#ccc; font-size:12px;">
+                    Jika <b>Private</b>, orang lain akan melihat <b>404</b> ketika mengakses profil Anda.
+                </small>
+            </div>
+
 
             <h4 style="margin:15px 0 10px; font-size:16px;">Links</h4>
             <div id="links-container">

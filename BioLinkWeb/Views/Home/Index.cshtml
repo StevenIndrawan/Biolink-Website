@@ -1,58 +1,16 @@
 ﻿@{
-    ViewData["Title"] = "Welcome";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
+<h1>Welcome to BioLinkWeb</h1>
+<p>Ini adalah halaman landing sebelum login.</p>
 
-            <div class="card shadow-lg border-0 rounded-3 mb-5">
-                <div class="card-body p-5">
-
-                    <h1 class="display-5 fw-bold text-primary">Selamat Datang</h1>
-                    <p class="lead mt-3">
-                        Buat halaman bio pribadi Anda dengan mudah.  
-                        Tambahkan tautan, profil, dan informasi kontak hanya dalam beberapa langkah.
-                    </p>
-
-                    <!--<div class="mt-4">
-                        <a asp-area="Identity" asp-page="/Account/Register" 
-                           class="btn btn-lg btn-primary me-2 shadow-sm">
-                            🚀 Daftar Sekarang
-                        </a>
-                        <a asp-area="Identity" asp-page="/Account/Login" 
-                           class="btn btn-lg btn-outline-secondary shadow-sm">
-                            🔑 Login
-                        </a>
-                    </div> -->
-
-                </div>
-            </div>
-
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body text-start">
-                    <h3 class="fw-bold mb-3 text-secondary">📰 Berita Kekinian</h3>
-                    
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Teknologi AI Semakin Berkembang</h5>
-                            <p class="mb-1">Perkembangan AI makin pesat dan mulai banyak dipakai dalam kehidupan sehari-hari.</p>
-                            <small>2 jam yang lalu</small>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Startup Indonesia Raih Pendanaan Baru</h5>
-                            <p class="mb-1">Sebuah startup lokal mendapatkan pendanaan seri B untuk memperluas bisnis di Asia Tenggara.</p>
-                            <small>5 jam yang lalu</small>
-                        </a>
-                        <a href="#" class="list-group-item list-group-item-action">
-                            <h5 class="mb-1">Tren Media Sosial 2025</h5>
-                            <p class="mb-1">Konten video pendek tetap jadi primadona di tahun ini.</p>
-                            <small>1 hari yang lalu</small>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+@if (Context.Session.GetString("Username") == null)
+{
+    <a asp-controller="Auth" asp-action="Login" class="btn btn-primary">Login</a>
+}
+else
+{
+    <p>Anda sudah login sebagai <b>@Context.Session.GetString("Username")</b>.</p>
+    <a asp-controller="Auth" asp-action="Profile" class="btn btn-success">Go to Profile</a>
+}

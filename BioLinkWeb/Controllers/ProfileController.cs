@@ -1,51 +1,62 @@
-using BioLinkWeb.Data;
-using BioLinkWeb.Models;   // <-- ini penting
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using BioLinkWeb.Models;
 
 namespace BioLinkWeb.Controllers
 {
+    [Authorize] // hanya bisa diakses kalau login
     public class ProfileController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ProfileController(ApplicationDbContext context)
+        public ProfileController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
+        // GET: /Profile
         public async Task<IActionResult> Index()
         {
-            var username = User.Identity?.Name;
-            if (username == null) return RedirectToAction("Login", "Account");
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user == null) return NotFound();
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
 
             return View(user);
         }
 
+        // GET: /Profile/Edit
+        public async Task<IActionResult> Edit()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
+
+            return View(user);
+        }
+
+        // POST: /Profile/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProfileViewModel model)
+        public async Task<IActionResult> Edit(ApplicationUser model)
         {
-            if (!ModelState.IsValid) return View(model);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return RedirectToAction("Login", "Account");
 
-            var username = User.Identity?.Name;
-            if (username == null) return RedirectToAction("Login", "Account");
+            if (ModelState.IsValid)
+            {
+                user.DisplayName = model.DisplayName;
+                user.Bio = model.Bio;
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
-            if (user == null) return NotFound();
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(user);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
 
-            user.DisplayName = model.DisplayName;
-            user.Bio = model.Bio;
-            user.ProfileImageUrl = model.ProfileImageUrl;
-
-            _context.Update(user);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index", "Dashboard");
+            return View(model);
         }
     }
 }
