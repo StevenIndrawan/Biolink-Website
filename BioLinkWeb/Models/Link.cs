@@ -4,24 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace BioLinkWeb.Models
 {
     public class Link
-    {
-        [Key]
-        public int Id { get; set; }
+{
+    public int Id { get; set; }
+    public string Url { get; set; } = string.Empty;
+    public string? Title { get; set; }
+    public string? Icon { get; set; }
 
-        [Required]
-        public string Title { get; set; } = string.Empty;
+    // 🔥 Tambahkan ini supaya bisa mengatur urutan link
+    public int Order { get; set; }
 
-        [Required]
-        public string Url { get; set; } = string.Empty;
-
-        public int Order { get; set; } = 0;
-
-        public string? Icon { get; set; }
-
-        [Required]
-        public string UserId { get; set; }
-
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; }
-    }
+    // Relasi balik ke User
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
+}
 }

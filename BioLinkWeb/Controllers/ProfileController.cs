@@ -1,59 +1,51 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using BioLinkWeb.Data;
-using BioLinkWeb.Models;
-using Microsoft.AspNetCore.Identity;
+using BioLinkWeb.Models;   // <-- ini penting
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
-    [Authorize]
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
 
-        public ProfileController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ProfileController(ApplicationDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            var profile = _context.UserProfiles.FirstOrDefault(p => p.UserId == user.Id);
+            var username = User.Identity?.Name;
+            if (username == null) return RedirectToAction("Login", "Account");
 
-            if (profile == null)
-            {
-                profile = new UserProfile { UserId = user.Id };
-                _context.UserProfiles.Add(profile);
-                await _context.SaveChangesAsync();
-            }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) return NotFound();
 
-            return View(profile);
+            return View(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Save(UserProfile profile)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ProfileViewModel model)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var existing = _context.UserProfiles.FirstOrDefault(p => p.UserId == user.Id);
+            if (!ModelState.IsValid) return View(model);
 
-            if (existing != null)
-            {
-                existing.DisplayName = profile.DisplayName;
-                existing.Bio = profile.Bio;
-                existing.ProfileImageUrl = profile.ProfileImageUrl;
-                _context.Update(existing);
-            }
-            else
-            {
-                profile.UserId = user.Id;
-                _context.Add(profile);
-            }
+            var username = User.Identity?.Name;
+            if (username == null) return RedirectToAction("Login", "Account");
 
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null) return NotFound();
+
+            user.DisplayName = model.DisplayName;
+            user.Bio = model.Bio;
+            user.ProfileImageUrl = model.ProfileImageUrl;
+
+            _context.Update(user);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

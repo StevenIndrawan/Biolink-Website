@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BioLinkWeb")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f4d20b0ba6ede4478e8c9fde24c577dc29804883")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+583dfafeafed0eeca471027cca76f729e058ce74")]
 [assembly: System.Reflection.AssemblyProductAttribute("BioLinkWeb")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BioLinkWeb")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

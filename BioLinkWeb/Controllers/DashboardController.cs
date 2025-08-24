@@ -1,24 +1,54 @@
+using BioLinkWeb.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using BioLinkWeb.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public DashboardController(ApplicationDbContext context)
+        public DashboardController(UserManager<ApplicationUser> userManager)
         {
-            _context = context;
+            _userManager = userManager;
         }
 
-        public async Task<IActionResult> Index()
+        // GET: Dashboard
+        public IActionResult Index()
         {
-            // Ambil semua user dari database
-            var users = await _context.Users.ToListAsync();
+            var users = _userManager.Users.Select(u => new UserViewModel
+            {
+                Id = u.Id,
+                UserName = u.UserName,
+                DisplayName = u.DisplayName,
+                Email = u.Email,
+                Bio = u.Bio,
+                IsActive = u.IsActive
+            }).ToList();
+
             return View(users);
+        }
+
+        // POST: Update User (from popup modal)
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UserViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return RedirectToAction("Index");
+
+            var user = await _userManager.FindByIdAsync(model.Id);
+            if (user != null)
+            {
+                user.DisplayName = model.DisplayName;
+                user.Email = model.Email;
+                user.UserName = model.UserName; // optional, jika ingin bisa ubah username
+                user.Bio = model.Bio;
+                user.IsActive = model.IsActive;
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
