@@ -9,6 +9,7 @@ namespace BioLinkWeb.Models
         public string? ProfileImageUrl { get; set; }
         public string? Background { get; set; }
         public bool IsPublic { get; set; } = true;
-        public List<Link> Links { get; set; } = new();
+        public List<Link> Links { get; set; } = new(); 
+        public bool IsActive { get; set; } = true;
     }
 }

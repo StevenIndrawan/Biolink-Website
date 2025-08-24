@@ -1,0 +1,46 @@
+@model IEnumerable<BioLinkWeb.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Dashboard Admin";
+}
+
+<h2>Dashboard Admin</h2>
+
+<div class="stats mb-3">
+    <p><b>Total Users:</b> @ViewBag.TotalUsers</p>
+    <p><b>Active Users:</b> @ViewBag.ActiveUsers</p>
+    <p><b>Blocked Users:</b> @ViewBag.BlockedUsers</p>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Status</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.Email</td>
+            <td>@user.UserName</td>
+            <td>
+                @if(user.IsActive) {
+                    <span class="text-success">Aktif</span>
+                } else {
+                    <span class="text-danger">Blokir</span>
+                }
+            </td>
+            <td>
+                <a href="/Admin/Delete/@user.Id" class="btn btn-danger btn-sm">Hapus</a>
+                <a href="/Admin/ToggleStatus/@user.Id" class="btn btn-warning btn-sm">Toggle Status</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

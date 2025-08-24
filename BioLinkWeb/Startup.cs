@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using BioLinkWeb.Data;
+using BioLinkWeb.Models; // <--- penting
+using Microsoft.AspNetCore.Identity; // <--- penting
 
 namespace BioLinkWeb
 {
@@ -21,8 +23,20 @@ namespace BioLinkWeb
         {
             services.AddControllersWithViews();
 
+            // Register DbContext
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite("Data Source=biolink.db"));
+
+            // ✅ Tambahkan Identity dengan ApplicationUser
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultUI()
+            .AddDefaultTokenProviders();
+
+            services.AddRazorPages(); // <-- tambahkan ini
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -55,6 +69,8 @@ namespace BioLinkWeb
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Biolink}/{action=Index}/{id?}");
+            // ✅ tambahkan untuk Identity UI
+            endpoints.MapRazorPages();
             });
         }
     }

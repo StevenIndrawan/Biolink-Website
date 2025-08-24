@@ -11,7 +11,7 @@ namespace BioLinkWeb.Models
 
         [Required, MaxLength(100)]
         public string Title { get; set; } = string.Empty;
-
+        public ApplicationUser User { get; set; }
         [Required, Url]
         public string Url { get; set; } = string.Empty;
 

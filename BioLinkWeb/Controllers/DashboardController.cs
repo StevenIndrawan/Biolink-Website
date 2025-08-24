@@ -1,24 +1,24 @@
-using BioLinkWeb.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using BioLinkWeb.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
     public class DashboardController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public DashboardController(UserManager<ApplicationUser> userManager)
+        public DashboardController(ApplicationDbContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
-        public async Task<IActionResult> Profile()
+        public async Task<IActionResult> Index()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return RedirectToAction("Login", "Account");
-
-            return View(user); // ini otomatis pakai ApplicationUser
+            // Ambil semua user dari database
+            var users = await _context.Users.ToListAsync();
+            return View(users);
         }
     }
 }

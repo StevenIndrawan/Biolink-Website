@@ -174,7 +174,7 @@
             BioLink ini Didukung Oleh @Model.DisplayName
         </div>
         <div style="margin-top:20px; text-align:center;">
-            <a href="/Biolink/Settings" style="
+            <a asp-controller="Biolink" asp-action="Settings" style="
                 display:inline-block;
                 background:#4cafef;
                 color:white;
@@ -184,10 +184,17 @@
                 font-weight:bold;">
                 ⚙️ Settings
             </a>
-        </div>
-        <div class="text-center mt-4">
-            <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Index">
-                Masuk ke Dashboard
+
+            <a href="/Dashboard/Index" style="
+                display:inline-block;
+                background:#3498db;
+                color:white;
+                padding:10px 20px;
+                border-radius:8px;
+                text-decoration:none;
+                font-weight:bold;
+                margin-left:10px;">
+                📊 Dashboard
             </a>
         </div>
     </div>
