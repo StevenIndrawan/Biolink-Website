@@ -4,11 +4,12 @@
     Layout = "_DashboardLayout";
     ViewData["Title"] = "Dashboard";
 }
+
 <div class="container my-5">
     <div class="d-flex align-items-center mb-4">
         <i class="bi bi-bar-chart-fill fs-1 text-primary me-3"></i>
         <h1 class="fw-bold mb-0">Dashboard</h1>
-        <a href="/Steven" class="btn btn-outline-secondary ms-3">
+        <a href="/@User.Identity.Name" class="btn btn-outline-secondary ms-3">
             <i class="bi bi-arrow-left-circle"></i> Kembali ke Biolink
         </a>
     </div>
@@ -30,12 +31,12 @@
                 <table class="table table-striped table-hover align-middle" id="userTable">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">Display Name</th>
-                            <th scope="col">Username</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Bio</th>
-                            <th scope="col">Status</th>
-                            <th scope="col" class="text-center">Action</th>
+                            <th>Display Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Bio</th>
+                            <th>Status</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,27 +52,21 @@
                                     <td>
                                         @if (user.IsActive)
                                         {
-                                            <span class="badge bg-success">
-                                                <i class="bi bi-check-circle-fill"></i> Active
-                                            </span>
+                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Active</span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">
-                                                <i class="bi bi-x-circle-fill"></i> Inactive
-                                            </span>
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Inactive</span>
                                         }
                                     </td>
                                     <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#settingsModal-@user.Id">
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#settingsModal-@user.Id">
                                             <i class="bi bi-gear-fill"></i> Edit
                                         </button>
                                         <form asp-controller="Dashboard" asp-action="DeleteUser" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@user.Id" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                    onclick="return confirm('Yakin ingin menghapus user ini?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus user ini?');">
                                                 <i class="bi bi-trash"></i> Hapus
                                             </button>
                                         </form>
@@ -92,94 +87,65 @@
     </div>
 </div>
 
-<div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+<!-- Modal Create User -->
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form method="post" asp-controller="Dashboard" asp-action="CreateUser">
+                @Html.AntiForgeryToken()
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createUserModalLabel">Tambah User Baru</h5>
+                    <h5 class="modal-title">Tambah User Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Display Name</label>
-                        <input type="text" name="DisplayName" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <input type="text" name="UserName" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="Email" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Bio</label>
-                        <textarea name="Bio" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
+                    <div class="mb-3"><label class="form-label">Display Name</label><input type="text" name="DisplayName" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label">Username</label><input type="text" name="UserName" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label">Email</label><input type="email" name="Email" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label">Password</label><input type="password" name="Password" class="form-control" required /></div>
+                    <div class="mb-3"><label class="form-label">Bio</label><textarea name="Bio" class="form-control"></textarea></div>
+                    <div class="mb-3"><label class="form-label">Status</label>
                         <select name="IsActive" class="form-select">
                             <option value="true">Active</option>
                             <option value="false">Inactive</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-success">Tambah</button>
-                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-success">Tambah</button></div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Modal Update User -->
 @if (Model != null)
 {
     foreach (var user in Model)
     {
-        <div class="modal fade" id="settingsModal-@user.Id" tabindex="-1" aria-labelledby="settingsModalLabel-@user.Id" aria-hidden="true">
+        <div class="modal fade" id="settingsModal-@user.Id" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <form method="post" asp-controller="Dashboard" asp-action="UpdateUser">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit User - @user.DisplayName</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
+                        @Html.AntiForgeryToken()
+                        <div class="modal-header"><h5 class="modal-title">Edit User - @user.DisplayName</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                         <div class="modal-body">
                             <input type="hidden" name="Id" value="@user.Id" />
-                            <div class="mb-3">
-                                <label class="form-label">Display Name</label>
-                                <input type="text" name="DisplayName" class="form-control" value="@user.DisplayName" required />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" name="Email" class="form-control" value="@user.Email" required />
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Bio</label>
-                                <textarea name="Bio" class="form-control">@user.Bio</textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Status</label>
+                            <div class="mb-3"><label class="form-label">Display Name</label><input type="text" name="DisplayName" class="form-control" value="@user.DisplayName" required /></div>
+                            <div class="mb-3"><label class="form-label">Email</label><input type="email" name="Email" class="form-control" value="@user.Email" required /></div>
+                            <div class="mb-3"><label class="form-label">Password (kosongkan jika tidak ingin ubah)</label><input type="password" name="Password" class="form-control" /></div>
+                            <div class="mb-3"><label class="form-label">Bio</label><textarea name="Bio" class="form-control">@user.Bio</textarea></div>
+                            <div class="mb-3"><label class="form-label">Status</label>
                                 <select name="IsActive" class="form-select">
-                                    @if (user.IsActive)
-                                    {
-                                        <option value="true" selected="selected">Active</option>
+                                    @if (user.IsActive) {
+                                        <option value="true" selected>Active</option>
                                         <option value="false">Inactive</option>
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         <option value="true">Active</option>
-                                        <option value="false" selected="selected">Inactive</option>
+                                        <option value="false" selected>Inactive</option>
                                     }
                                 </select>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
+                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
                     </form>
                 </div>
             </div>
@@ -187,7 +153,6 @@
     }
 }
 
-<!-- Script Untuk Search -->
 <script>
     document.getElementById("searchInput").addEventListener("keyup", function () {
         var value = this.value.toLowerCase();

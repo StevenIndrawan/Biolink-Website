@@ -1,34 +1,81 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using BioLinkWeb.Data;
+﻿using BioLinkWeb.Data;
 using BioLinkWeb.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
-builder.Services.AddControllersWithViews();
+// koneksi ke SQLite
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite("Data Source=biolink.db"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-    })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultUI()
-    .AddDefaultTokenProviders();
+// Identity + role + custom password rules
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 4;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders()
+.AddDefaultUI();
 
-builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
+
+// atur AccessDenied redirect
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/Home/AccessDenied";
+});
 
 var app = builder.Build();
 
-// ✅ Seed data async
+// pastikan database ada + buat role Admin + user default admin
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.EnsureCreated();
 
-    await SeedUsersAsync(userManager);
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    // buat role Admin kalau belum ada
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+
+    // buat user admin default kalau belum ada
+    string adminEmail = "admin@example.com";
+    string adminPassword = "Admin123!";
+
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            DisplayName = "Super Admin",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+    else
+    {
+        // pastikan user punya role Admin
+        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
 }
 
 if (!app.Environment.IsDevelopment())
@@ -45,51 +92,24 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// redirect root (/) langsung ke login
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/Identity/Account/Login");
     return Task.CompletedTask;
 });
 
-app.MapControllerRoute(
-    name: "dashboard",
-    pattern: "Dashboard/{action=Index}/{id?}",
-    defaults: new { controller = "Dashboard" });
-
+// route dashboard (hanya bisa setelah login + admin)
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Biolink}/{action=Index}/{username?}"
-);
+    pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+
+// route biolink username
+app.MapControllerRoute(
+    name: "biolink",
+    pattern: "{username}",
+    defaults: new { controller = "Biolink", action = "Index" });
 
 app.MapRazorPages();
 
 app.Run();
-
-// ✅ Method seed user
-static async Task SeedUsersAsync(UserManager<ApplicationUser> userManager)
-{
-    if (!userManager.Users.Any())
-    {
-        var user1 = new ApplicationUser
-        {
-            UserName = "steven123",
-            Email = "steven@email.com",
-            DisplayName = "Steven",
-            Bio = "Fullstack dev",
-            IsActive = true,
-            EmailConfirmed = true
-        };
-        await userManager.CreateAsync(user1, "Password123!");
-
-        var user2 = new ApplicationUser
-        {
-            UserName = "amanda_dev",
-            Email = "amanda@email.com",
-            DisplayName = "Amanda",
-            Bio = "UI/UX Designer",
-            IsActive = false,
-            EmailConfirmed = true
-        };
-        await userManager.CreateAsync(user2, "Password123!");
-    }
-}

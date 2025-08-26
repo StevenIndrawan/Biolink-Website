@@ -33,6 +33,14 @@
       "PackagePath": "staticwebassets\\images\\profile.png"
     },
     {
+      "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\images\\profiles\\608d7d2d-49c7-4ecd-94d7-2ac9f08d0798.JPG",
+      "PackagePath": "staticwebassets\\images\\profiles\\608d7d2d-49c7-4ecd-94d7-2ac9f08d0798.JPG"
+    },
+    {
+      "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\images\\profiles\\9ddd2f85-5828-4713-96e6-1a64ca6b442f.JPG",
+      "PackagePath": "staticwebassets\\images\\profiles\\9ddd2f85-5828-4713-96e6-1a64ca6b442f.JPG"
+    },
+    {
       "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
@@ -171,6 +179,10 @@
     {
       "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Steven\\Source\\Biolink-Website\\BioLinkWeb\\wwwroot\\procfile\\BioLinkWeb.dll",
+      "PackagePath": "staticwebassets\\procfile\\BioLinkWeb.dll"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.BioLinkWeb.Microsoft.AspNetCore.StaticWebAssets.props",

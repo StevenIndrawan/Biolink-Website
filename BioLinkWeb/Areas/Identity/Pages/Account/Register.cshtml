@@ -1,146 +1,162 @@
 ﻿@page
-@model BioLinkWeb.Areas.Identity.Pages.Account.RegisterModel
+@model RegisterModel
 @{
+    ViewData["Title"] = "Register";
     Layout = null;
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
-    <link rel="stylesheet" href="~/css/site.css" />
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #4f46e5, #3b82f6);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+    }
 
-        .register-box {
-            background: #fff;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            width: 380px;
-            animation: fadeIn 0.6s ease-in-out;
-        }
+    .auth-container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        .register-box h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #111827;
-        }
+    .auth-card {
+        background: #fff;
+        border-radius: 15px;
+        padding: 40px 35px;
+        width: 420px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        color: #333;
+    }
 
-        .register-box h2 span {
-            font-size: 1.8rem;
-            margin-right: 5px;
-        }
+    .auth-card h3 {
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #333;
+    }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+    .form-label {
+        font-size: 14px;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #333;
+    }
 
-        label {
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            color: #374151;
-            font-weight: 500;
-        }
+    .form-control, textarea {
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        color: #333;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 15px;
+        width: 100%;
+    }
 
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: 0.2s;
-        }
+    .form-control:focus, textarea:focus {
+        border-color: #667eea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    }
 
-        input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
-        }
+    .mb-3 {
+        margin-bottom: 18px !important;
+    }
 
-        button {
-            width: 100%;
-            background: #3b82f6;
-            color: #fff;
-            padding: 12px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: 500;
-        }
+    .btn-custom {
+        background: linear-gradient(90deg, #667eea, #764ba2);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 12px;
+        border-radius: 10px;
+        width: 100%;
+        transition: 0.3s;
+    }
 
-        button:hover {
-            background: #2563eb;
-        }
+    .btn-custom:hover {
+        opacity: 0.95;
+        transform: translateY(-2px);
+    }
 
-        .login-link {
-            margin-top: 18px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
+    .form-check-label {
+        margin-left: 6px;
+        color: #333;
+    }
 
-        .login-link a {
-            color: #3b82f6;
-            font-weight: 500;
-            text-decoration: none;
-        }
+    .text-link {
+        color: #667eea;
+        font-weight: 600;
+        text-decoration: none;
+    }
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
+    .text-link:hover {
+        text-decoration: underline;
+    }
+</style>
 
-        @@keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
-    <div class="register-box">
-        <h2><span>📝</span> Register</h2>
-        <form method="post">
-            <div class="form-group">
-                <label asp-for="Input.UserName">Username</label>
-                <input asp-for="Input.UserName" type="text" />
-                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+<div class="auth-container">
+    <div class="auth-card">
+        <h3>✨ Buat Akun Baru</h3>
+
+        <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <!-- Username -->
+            <div class="mb-3">
+                <label asp-for="Input.UserName" class="form-label"></label>
+                <input asp-for="Input.UserName" class="form-control" placeholder="Pilih username unik" />
+                <span asp-validation-for="Input.UserName" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.Email">Email</label>
-                <input asp-for="Input.Email" type="email" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" placeholder="contoh@email.com" />
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.Password">Password</label>
-                <input asp-for="Input.Password" type="password" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+            <!-- Password -->
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" placeholder="••••••••" />
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Input.ConfirmPassword">Konfirmasi Password</label>
-                <input asp-for="Input.ConfirmPassword" type="password" />
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+            <!-- Confirm Password -->
+            <div class="mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Ulangi password" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
             </div>
-            <button type="submit">Daftar</button>
-            <div class="login-link">
-                Sudah punya akun? <a asp-page="./Login">Login di sini</a>
+
+            <!-- Display Name -->
+            <div class="mb-3">
+                <label asp-for="Input.DisplayName" class="form-label"></label>
+                <input asp-for="Input.DisplayName" class="form-control" placeholder="Nama yang ingin ditampilkan" />
+                <span asp-validation-for="Input.DisplayName" class="text-danger small"></span>
             </div>
+
+            <!-- Bio -->
+            <div class="mb-3">
+                <label asp-for="Input.Bio" class="form-label"></label>
+                <textarea asp-for="Input.Bio" class="form-control" rows="3" placeholder="Ceritakan sedikit tentang dirimu..."></textarea>
+                <span asp-validation-for="Input.Bio" class="text-danger small"></span>
+            </div>
+
+            <!-- Public / Private -->
+            <div class="form-check mb-3">
+                <input asp-for="Input.IsPublic" class="form-check-input" />
+                <label asp-for="Input.IsPublic" class="form-check-label">Profil Publik</label>
+            </div>
+
+            <button type="submit" class="btn btn-custom">Daftar</button>
         </form>
+
+        <div class="text-center mt-3">
+            <small>Sudah punya akun? <a asp-page="./Login" class="text-link">Login</a></small>
+        </div>
     </div>
+</div>
+
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
-</body>
-</html>
+}

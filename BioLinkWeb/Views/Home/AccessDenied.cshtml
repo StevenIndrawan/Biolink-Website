@@ -1,0 +1,27 @@
+@{
+    Layout = "_DashboardLayout"; // kalau ada, kalau tidak pakai "_Layout"
+    ViewData["Title"] = "Akses Ditolak";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5">
+                    <i class="bi bi-shield-lock-fill text-danger" style="font-size: 4rem;"></i>
+                    <h2 class="fw-bold mt-3">Akses Ditolak</h2>
+                    <p class="text-muted">
+                        Anda tidak memiliki izin untuk mengakses halaman ini.
+                    </p>
+
+                    <a href="/@User.Identity.Name" class="btn btn-primary mt-3">
+                        <i class="bi bi-house-fill"></i> Kembali ke Biolink
+                    </a>
+                    <a asp-area="Identity" asp-page="/Account/Logout" class="btn btn-outline-danger mt-3 ms-2">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

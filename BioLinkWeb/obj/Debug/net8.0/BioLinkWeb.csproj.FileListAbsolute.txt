@@ -1,5 +1,14 @@
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\web.config
 C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\appsettings.Development.json
 C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\appsettings.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\appsettings.Development.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\appsettings.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\BioLinkWeb.deps.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\BioLinkWeb.runtimeconfig.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\wwwroot\lib\bootstrap\.bower.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\wwwroot\lib\jquery-validation-unobtrusive\.bower.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\wwwroot\lib\jquery-validation\.bower.json
+C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\out\wwwroot\lib\jquery\.bower.json
 C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\BioLinkWeb.staticwebassets.runtime.json
 C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\BioLinkWeb.exe
 C:\Steven\Source\Biolink-Website\BioLinkWeb\bin\Debug\net8.0\BioLinkWeb.deps.json

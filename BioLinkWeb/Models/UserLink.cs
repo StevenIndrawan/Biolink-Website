@@ -4,17 +4,20 @@ namespace BioLinkWeb.Models
 {
     public class UserLink
     {
-        [Key]
         public int Id { get; set; }
 
-        public string UserId { get; set; } = string.Empty;
+        [Required]
+        public string? Title { get; set; }
 
-        [Required, MaxLength(100)]
-        public string Title { get; set; } = string.Empty;
+        [Required]
+        public string? Url { get; set; }
+
+        public string? Icon { get; set; } = "🔗";
+
+        public int Order { get; set; }
+
+        // Relasi ke User
+        public string UserId { get; set; }
         public ApplicationUser User { get; set; }
-        [Required, Url]
-        public string Url { get; set; } = string.Empty;
-
-        public int Order { get; set; } = 0;
     }
 }

@@ -14,7 +14,7 @@ namespace BioLinkWeb.Models
         public string ProfileImageUrl { get; set; }
         public string Background { get; set; }
 
-        public List<Link> Links { get; set; } = new List<Link>();
+        public List<UserLink> Links { get; set; } = new List<UserLink>();
         public bool IsPublic { get; set; } = true;  // ✅ tambah
         public string Visibility { get; set; } = "public";
 

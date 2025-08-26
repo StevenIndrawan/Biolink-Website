@@ -1,138 +1,112 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using BioLinkWeb.Data;
 using BioLinkWeb.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace BioLinkWeb.Controllers
 {
+    [Authorize (Roles = "Admin")] // hanya bisa diakses setelah login
     public class DashboardController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public DashboardController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public DashboardController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
-            _context = context;
             _userManager = userManager;
+            _context = context;
         }
 
-        // READ (List)
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var users = await _context.Users
                 .Select(u => new UserViewModel
                 {
                     Id = u.Id,
-                    DisplayName = u.DisplayName,
                     UserName = u.UserName,
+                    DisplayName = u.DisplayName,
                     Email = u.Email,
                     Bio = u.Bio,
-                    IsActive = u.IsActive
-                }).ToListAsync();
+                    IsActive = u.IsPublic
+                })
+                .ToListAsync();
 
-            return View(users);
+            return View(users); // cocok dengan @model IEnumerable<UserViewModel>
         }
 
-        // CREATE (GET)
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserViewModel model)
+        public async Task<IActionResult> CreateUser(UserViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return RedirectToAction("Index");
+
+            var user = new ApplicationUser
             {
-                var user = new ApplicationUser
-                {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    DisplayName = model.DisplayName,
-                    Bio = model.Bio,
-                    IsActive = model.IsActive
-                };
-
-                await _userManager.CreateAsync(user, "Password123!"); // default password
-                return RedirectToAction(nameof(Index));
-            }
-            return View(model);
-        }
-
-        // EDIT (GET)
-        public async Task<IActionResult> Edit(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-
-            var model = new UserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                DisplayName = user.DisplayName,
-                Bio = user.Bio,
-                IsActive = user.IsActive
+                UserName = model.UserName,
+                DisplayName = model.DisplayName,
+                Email = model.Email,
+                Bio = model.Bio,
+                IsPublic = model.IsActive
             };
 
-            return View(model);
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                // bisa kasih TempData error message
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index"); // balik ke dashboard, tidak ke login
         }
 
-        // EDIT (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(UserViewModel model)
+        public async Task<IActionResult> UpdateUser(UserViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await _context.Users.FindAsync(model.Id);
-                if (user == null) return NotFound();
-
-                user.DisplayName = model.DisplayName;
-                user.Email = model.Email;
-                user.Bio = model.Bio;
-                user.IsActive = model.IsActive;
-
-                _context.Update(user);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-            return View(model);
-        }
-
-        // DELETE (GET)
-        public async Task<IActionResult> Delete(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(model.Id);
             if (user == null) return NotFound();
 
-            var model = new UserViewModel
-            {
-                Id = user.Id,
-                DisplayName = user.DisplayName,
-                Email = user.Email
-            };
+            user.DisplayName = model.DisplayName;
+            user.Email = model.Email;
+            user.Bio = model.Bio;
+            user.IsPublic = model.IsActive;
 
-            return View(model);
-        }
-
-        // DELETE (POST)
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
             {
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
 
-            return RedirectToAction(nameof(Index));
+            // update password jika diisi
+            if (!string.IsNullOrEmpty(model.Password))
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                await _userManager.ResetPasswordAsync(user, token, model.Password);
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound();
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

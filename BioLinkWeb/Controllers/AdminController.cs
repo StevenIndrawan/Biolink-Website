@@ -14,7 +14,6 @@ namespace BioLinkWeb.Controllers
             _context = context;
         }
 
-        // Dashboard
         public IActionResult Index()
         {
             var users = _context.Users.ToList();
@@ -26,7 +25,6 @@ namespace BioLinkWeb.Controllers
             return View(users);
         }
 
-        // Hapus user
         public IActionResult Delete(string id)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
@@ -38,7 +36,6 @@ namespace BioLinkWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        // Blokir / Aktifkan user
         public IActionResult ToggleStatus(string id)
         {
             var user = _context.Users.FirstOrDefault(u => u.Id == id);

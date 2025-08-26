@@ -7,7 +7,7 @@ namespace BioLinkWeb.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View(); // Views/Auth/Login.cshtml
+            return View();
         }
 
         [HttpPost]

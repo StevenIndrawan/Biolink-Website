@@ -1,10 +1,11 @@
 ﻿using BioLinkWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
+    [Authorize] // hanya user login yang bisa akses
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -14,24 +15,31 @@ namespace BioLinkWeb.Controllers
             _userManager = userManager;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit()
         {
             // Ambil user yang sedang login
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
-                return RedirectToAction("Login", "Account"); // atau ke halaman login
+                return Redirect("/Identity/Account/Login"); // redirect ke login Identity
 
-            return View(user); // ✅ return ApplicationUser
+            return View(user); // ✅ return ApplicationUser ke View
+        }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ApplicationUser model, IFormFile? profileImage)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null)
-                return RedirectToAction("Login", "Account");
+                return Redirect("/Identity/Account/Login");
 
             // Update basic profile
             user.DisplayName = model.DisplayName;
@@ -42,8 +50,13 @@ namespace BioLinkWeb.Controllers
             // Upload foto profil kalau ada
             if (profileImage != null && profileImage.Length > 0)
             {
-                var fileName = $"{Guid.NewGuid()}_{profileImage.FileName}";
-                var filePath = Path.Combine("wwwroot/images/profiles", fileName);
+                // pastikan folder ada
+                var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profiles");
+                if (!Directory.Exists(uploadDir))
+                    Directory.CreateDirectory(uploadDir);
+
+                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(profileImage.FileName)}";
+                var filePath = Path.Combine(uploadDir, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
@@ -53,9 +66,16 @@ namespace BioLinkWeb.Controllers
                 user.ProfileImageUrl = $"/images/profiles/{fileName}";
             }
 
-            await _userManager.UpdateAsync(user);
+            // update user di database
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Gagal memperbarui profil");
+                return View(user);
+            }
 
-            return RedirectToAction("Edit");
+            // setelah update redirect ke halaman biolink miliknya
+            return Redirect("/" + user.UserName);
         }
     }
 }

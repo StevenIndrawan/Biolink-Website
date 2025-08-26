@@ -5,7 +5,7 @@ using BioLinkWeb.Models;
 
 namespace BioLinkWeb.Controllers
 {
-    [Authorize] // hanya bisa diakses kalau login
+    [Authorize]
     public class ProfileController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -17,7 +17,6 @@ namespace BioLinkWeb.Controllers
             _signInManager = signInManager;
         }
 
-        // GET: /Profile
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -26,7 +25,6 @@ namespace BioLinkWeb.Controllers
             return View(user);
         }
 
-        // GET: /Profile/Edit
         public async Task<IActionResult> Edit()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -35,7 +33,6 @@ namespace BioLinkWeb.Controllers
             return View(user);
         }
 
-        // POST: /Profile/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ApplicationUser model)

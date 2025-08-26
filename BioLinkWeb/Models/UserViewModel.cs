@@ -9,5 +9,6 @@ namespace BioLinkWeb.Models
         public string Bio { get; set; }
         public bool IsActive { get; set; }
         public string Username => UserName;
+        public string Password { get; set; }
     }
 }

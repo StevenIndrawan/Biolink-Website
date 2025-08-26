@@ -13,5 +13,22 @@ namespace BioLinkWeb.Data
 
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<UserLink> UserLinks { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<UserLink>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.Links)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ApplicationUser>()
+                .HasOne(u => u.Profile)
+                .WithOne()
+                .HasForeignKey<UserProfile>(p => p.UserId);
+        }
+
     }
 }

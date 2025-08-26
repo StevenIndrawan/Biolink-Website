@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 
 namespace BioLinkWeb.Models
 {
@@ -8,16 +7,16 @@ namespace BioLinkWeb.Models
         [Key]
         public int Id { get; set; }
 
-        public string UserId { get; set; } = string.Empty;
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }   // navigation ke ApplicationUser
 
-        [Required, MaxLength(100)]
-        public string DisplayName { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(50)]
+        public string DisplayName { get; set; }
 
-        [MaxLength(250)]
-        public string Bio { get; set; } = string.Empty;
+        [MaxLength(200)]
+        public string? Bio { get; set; }
 
-        public string? ProfileImageUrl { get; set; }
-
-        public ApplicationUser? User { get; set; }
+        public bool IsPublic { get; set; } = true;
     }
 }

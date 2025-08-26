@@ -1,38 +1,45 @@
 @model BioLinkWeb.Models.ApplicationUser
+
 @{
+    Layout = "_DashboardLayout";
     ViewData["Title"] = "Edit Profile";
 }
 
-<div class="container mt-5">
-    <h2>Edit Profil</h2>
-    <form asp-action="Edit" asp-controller="Home" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label class="form-label">Foto Profil</label><br />
-            <img src="@(Model.ProfileImageUrl ?? "/images/default-profile.png")"
-                 alt="Profile"
-                 class="rounded-circle mb-3"
-                 style="width:120px;height:120px;object-fit:cover;" />
-            <input type="file" name="profileImage" class="form-control" />
-        </div>
+<div class="container my-5">
+    <h2>Edit Profile</h2>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
 
         <div class="mb-3">
-            <label class="form-label">Nama Tampilan</label>
-            <input type="text" name="DisplayName" value="@Model.DisplayName" class="form-control" />
+            <label class="form-label">Display Name</label>
+            <input type="text" asp-for="DisplayName" class="form-control" />
         </div>
 
         <div class="mb-3">
             <label class="form-label">Bio</label>
-            <textarea name="Bio" class="form-control">@Model.Bio</textarea>
+            <textarea asp-for="Bio" class="form-control"></textarea>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Background</label>
-            <input type="text" name="Background" value="@Model.Background" class="form-control" />
+            <input type="text" asp-for="Background" class="form-control" />
         </div>
 
-        <div class="mb-3 form-check">
-            <input type="checkbox" name="IsPublic" class="form-check-input" @(Model.IsPublic ? "checked" : "") />
-            <label class="form-check-label">Tampilkan profil ke publik</label>
+        <div class="mb-3">
+            <label class="form-label">Profile Image</label>
+            <input type="file" name="profileImage" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+            {
+                <img src="@Model.ProfileImageUrl" class="img-thumbnail mt-2" style="max-width: 150px;" />
+            }
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Public Profile?</label>
+            <select asp-for="IsPublic" class="form-select">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>

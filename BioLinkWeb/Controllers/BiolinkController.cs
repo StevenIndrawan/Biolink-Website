@@ -1,91 +1,162 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using BioLinkWeb.Data;
 using BioLinkWeb.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BioLinkWeb.Controllers
 {
+    [Authorize] // default harus login, kecuali yang [AllowAnonymous]
+    [Route("Biolink")] // semua endpoint di controller ini prefiks /Biolink
     public class BiolinkController : Controller
     {
-        [Route("{username}")]
-        public IActionResult Index(string username)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
+
+        public BiolinkController(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
-            var user = UserStore.CurrentUser;
-
-            // Jika user belum ada, inisialisasi default
-            if (user == null)
-            {
-                user = new User
-                {
-                    Username = "steven",
-                    DisplayName = "Steven",
-                    Bio = "Selamat datang di bio saya 👋",
-                    ProfileImageUrl = "/images/profile.png",
-                    Background = "linear-gradient(to right, #6a11cb, #2575fc)",
-                    IsPublic = true,
-                    Links = new List<Link>
-                    {
-                        new Link { Id = 1, Title = "Website", Url = "https://steventi.wordpress.com/", Icon="🌐", Order=1 },
-                        new Link { Id = 2, Title = "Instagram", Url = "https://www.instagram.com/stevens.010/", Icon="📸", Order=2 },
-                        new Link { Id = 3, Title = "Twitter", Url = "https://twitter.com/", Icon="🐦", Order=3 },
-                        new Link { Id = 4, Title = "LinkedIn", Url = "https://www.linkedin.com/in/steven", Icon="💼", Order=4 },
-                        new Link { Id = 5, Title = "Github", Url = "https://github.com/steven", Icon="🐙", Order=5 },
-                        new Link { Id = 6, Title = "YouTube", Url = "https://youtube.com", Icon="▶️", Order=6 }
-                    }
-                };
-
-                UserStore.CurrentUser = user;
-            }
-
-            // validasi username & visibility
-            if (!string.Equals(user.Username, username, StringComparison.OrdinalIgnoreCase))
-            {
-                return NotFound();
-            }
-
-            if (!user.IsPublic)
-            {
-                return NotFound(); // 🔒 private → 404
-            }
-
-            return View(user);
+            _userManager = userManager;
+            _context = context;
         }
 
-        [HttpGet]
-        public IActionResult Settings()
+        // =====================================================
+        // 🔹 Public Profile: /{username}
+        // =====================================================
+        [AllowAnonymous]
+        [HttpGet("/" + "{username}")] // root-level username
+        public async Task<IActionResult> Index(string username)
         {
-            var model = new ProfileSettingViewModel
+            if (string.IsNullOrEmpty(username))
+                return NotFound();
+
+            var user = await _userManager.Users
+                .Include(u => u.Links)
+                .FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null || !user.IsPublic)
+                return NotFound();
+
+            return View(user); // Views/Biolink/Index.cshtml
+        }
+
+        // =====================================================
+        // 🔹 GET Settings: /Biolink/Settings
+        // =====================================================
+        [HttpGet("Settings")]
+        public async Task<IActionResult> Settings()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+
+            await _context.Entry(user).Collection(u => u.Links).LoadAsync();
+
+            var vm = new ProfileSettingViewModel
             {
-                Username = UserStore.CurrentUser.Username,
-                DisplayName = UserStore.CurrentUser.DisplayName,
-                Bio = UserStore.CurrentUser.Bio,
-                ProfileImageUrl = UserStore.CurrentUser.ProfileImageUrl,
-                Background = UserStore.CurrentUser.Background,
-                IsPublic = UserStore.CurrentUser.IsPublic, // ✅ ambil status public/private
-                Links = UserStore.CurrentUser.Links
+                Username = user.UserName,
+                DisplayName = user.DisplayName,
+                Bio = user.Bio,
+                ProfileImageUrl = string.IsNullOrEmpty(user.ProfileImageUrl)
+                                    ? "/images/profile.png"
+                                    : user.ProfileImageUrl,
+                Background = user.Background,
+                IsPublic = user.IsPublic,
+                Links = user.Links.ToList()
             };
 
-            return View(model);
+            return View(vm); // Views/Biolink/Settings.cshtml
         }
 
-        [HttpPost]
-        public IActionResult Settings(ProfileSettingViewModel model)
+        // =====================================================
+        // 🔹 POST Settings (update profile)
+        // =====================================================
+        [HttpPost("Settings")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Settings(ProfileSettingViewModel model, IFormFile? profileImage)
         {
-            if (!ModelState.IsValid)
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+
+            user.DisplayName = model.DisplayName;
+            user.Bio = model.Bio;
+            user.Background = model.Background;
+            user.IsPublic = model.IsPublic;
+
+            // ✅ upload foto profil
+            if (profileImage != null && profileImage.Length > 0)
             {
-                return View(model);
+                var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/profiles");
+                if (!Directory.Exists(uploadDir))
+                    Directory.CreateDirectory(uploadDir);
+
+                // Hapus foto lama kalau ada
+                if (!string.IsNullOrEmpty(user.ProfileImageUrl))
+                {
+                    var oldPath = Path.Combine(uploadDir, Path.GetFileName(user.ProfileImageUrl));
+                    if (System.IO.File.Exists(oldPath))
+                        System.IO.File.Delete(oldPath);
+                }
+
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(profileImage.FileName)}";
+                var filePath = Path.Combine(uploadDir, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await profileImage.CopyToAsync(stream);
+                }
+
+                user.ProfileImageUrl = $"/images/profiles/{fileName}";
             }
 
-            // update ke UserStore
-            UserStore.CurrentUser.Username = model.Username;
-            UserStore.CurrentUser.DisplayName = model.DisplayName;
-            UserStore.CurrentUser.Bio = model.Bio;
-            UserStore.CurrentUser.ProfileImageUrl = model.ProfileImageUrl;
-            UserStore.CurrentUser.Background = model.Background;
-            UserStore.CurrentUser.IsPublic = model.IsPublic; // ✅ simpan setting
-            UserStore.CurrentUser.Links = model.Links ?? new List<Link>();
+            _context.Update(user);
+            await _context.SaveChangesAsync();
 
-            TempData["Message"] = "Profile berhasil disimpan!";
+            return RedirectToAction("Settings");
+        }
 
-            return RedirectToAction("Index", new { username = model.Username });
+
+        // =====================================================
+        // 🔹 AddLink: /Biolink/AddLink
+        // =====================================================
+        [HttpPost("AddLink")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddLink(UserLink link)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+
+            link.UserId = user.Id;
+            _context.UserLinks.Add(link);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Settings");
+        }
+
+        // =====================================================
+        // 🔹 DeleteLink: /Biolink/DeleteLink
+        // =====================================================
+        [HttpPost("DeleteLink")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteLink(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+
+            var link = await _context.UserLinks
+                .FirstOrDefaultAsync(l => l.Id == id && l.UserId == user.Id);
+
+            if (link == null) return NotFound();
+
+            _context.UserLinks.Remove(link);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Settings");
         }
     }
 }
