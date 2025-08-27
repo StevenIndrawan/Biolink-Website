@@ -1,0 +1,42 @@
+@model IEnumerable<BioLinkWeb.Models.UserViewModel>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.DisplayName</td>
+            <td>@user.UserName</td>
+            <td>@user.Email</td>
+            <td>@user.Bio</td>
+            <td>
+                @if (user.IsActive)
+                {
+                    <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Inactive</span>
+                }
+            </td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#settingsModal-@user.Id">
+                    <i class="bi bi-gear-fill"></i> Edit
+                </button>
+                <form asp-controller="Dashboard" asp-action="DeleteUser" method="post" class="d-inline ajax-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@user.Id" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus user ini?');">
+                        <i class="bi bi-trash"></i> Hapus
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="6" class="text-center text-muted">Belum ada data user</td>
+    </tr>
+}

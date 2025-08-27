@@ -18,15 +18,19 @@
             justify-content: center;
             align-items: center;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(270deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
+            background: @(string.IsNullOrEmpty(Model.Background) 
+                          ? "linear-gradient(270deg,#6a11cb,#2575fc,#ff6a00,#ee0979)" 
+                          : Model.Background);
             background-size: 800% 800%;
             animation: gradientMove 20s ease infinite;
         }
+
         @@keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+
         .profile-card {
             position: relative;
             background: rgba(255,255,255,0.08);
@@ -95,7 +99,9 @@
     <div class="profile-card">
         <!-- Logout -->
         <form asp-area="Identity" asp-page="/Account/Logout" method="post">
-            <button type="submit" class="logout-btn" title="Logout">⏻</button>
+            <button type="submit" class="logout-btn" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+            </button>
         </form>
 
         <!-- Foto Profil -->
@@ -129,7 +135,10 @@
 
         <div class="actions">
             <a asp-controller="Biolink" asp-action="Settings" class="settings">⚙️ Settings</a>
-            <a href="/Dashboard/Index">📊 Dashboard</a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="/Dashboard/Index">📊 Dashboard</a>
+            }
         </div>
     </div>
 </body>

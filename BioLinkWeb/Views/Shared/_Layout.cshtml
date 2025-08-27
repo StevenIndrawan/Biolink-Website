@@ -98,7 +98,14 @@
             <ul class="nav flex-column">
                 <li class="nav-item"><a class="nav-link" asp-controller="Profile" asp-action="Index">👤 My Profile</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Biolink" asp-action="Settings">⚙️ Settings</a></li>
-                <li class="nav-item"><a class="nav-link" asp-controller="Dashboard" asp-action="Index">📊 Dashboard</a></li>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                }
                 <li class="nav-item">
                     <form method="post" asp-area="Identity" asp-page="/Account/Logout">
                         <button type="submit" class="btn btn-danger w-100">🚪 Logout</button>

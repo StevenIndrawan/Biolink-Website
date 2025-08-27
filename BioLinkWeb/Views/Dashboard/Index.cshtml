@@ -39,47 +39,8 @@
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var user in Model)
-                            {
-                                <tr>
-                                    <td>@user.DisplayName</td>
-                                    <td>@user.UserName</td>
-                                    <td>@user.Email</td>
-                                    <td>@user.Bio</td>
-                                    <td>
-                                        @if (user.IsActive)
-                                        {
-                                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Active</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Inactive</span>
-                                        }
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#settingsModal-@user.Id">
-                                            <i class="bi bi-gear-fill"></i> Edit
-                                        </button>
-                                        <form asp-controller="Dashboard" asp-action="DeleteUser" method="post" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="id" value="@user.Id" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus user ini?');">
-                                                <i class="bi bi-trash"></i> Hapus
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center text-muted">Belum ada data user</td>
-                            </tr>
-                        }
+                    <tbody id="userTableBody">
+                        @await Html.PartialAsync("_UserTablePartial", Model)
                     </tbody>
                 </table>
             </div>
@@ -91,7 +52,7 @@
 <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form method="post" asp-controller="Dashboard" asp-action="CreateUser">
+            <form method="post" asp-controller="Dashboard" asp-action="CreateUser" class="ajax-form">
                 @Html.AntiForgeryToken()
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah User Baru</h5>
@@ -124,7 +85,7 @@
         <div class="modal fade" id="settingsModal-@user.Id" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <form method="post" asp-controller="Dashboard" asp-action="UpdateUser">
+                    <form method="post" asp-controller="Dashboard" asp-action="UpdateUser" class="ajax-form">
                         @Html.AntiForgeryToken()
                         <div class="modal-header"><h5 class="modal-title">Edit User - @user.DisplayName</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                         <div class="modal-body">
@@ -153,7 +114,28 @@
     }
 }
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // Semua form CRUD user pakai AJAX stay di halaman dashboard
+    $(document).on("submit", ".ajax-form", function (e) {
+        e.preventDefault();
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            type: "POST",
+            data: form.serialize(),
+            success: function (result) {
+                $("#userTableBody").html(result);
+                $(".modal").modal("hide");
+                form[0].reset();
+            },
+            error: function () {
+                alert("Terjadi kesalahan, coba lagi!");
+            }
+        });
+    });
+
+    // Pencarian user
     document.getElementById("searchInput").addEventListener("keyup", function () {
         var value = this.value.toLowerCase();
         var rows = document.querySelectorAll("#userTable tbody tr");
