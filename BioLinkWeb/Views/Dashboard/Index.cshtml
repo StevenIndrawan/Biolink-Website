@@ -21,17 +21,8 @@
         </button>
     </div> 
 
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari user...">
-        </div>
-        <div class="col-md-3">
-            <select id="statusFilter" class="form-select">
-                <option value="all">Semua Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </select>
-        </div>
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari user...">
     </div>
 
     <div class="card shadow-sm border-0 rounded-3">
@@ -45,6 +36,7 @@
                             <th>Email</th>
                             <th>Bio</th>
                             <th>Status</th>
+                            <th>Visibility</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -79,6 +71,12 @@
                             <option value="false">Inactive</option>
                         </select>
                     </div>
+                    <div class="mb-3"><label class="form-label">Visibility</label>
+                        <select name="IsPublic" class="form-select">
+                            <option value="true">Public</option>
+                            <option value="false">Private</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-success">Tambah</button></div>
             </form>
@@ -100,18 +98,20 @@
                         <div class="modal-body">
                             <input type="hidden" name="Id" value="@user.Id" />
                             <div class="mb-3"><label class="form-label">Display Name</label><input type="text" name="DisplayName" class="form-control" value="@user.DisplayName" required /></div>
+                            <div class="mb-3"><label class="form-label">Username</label><input type="text" name="UserName" class="form-control" value="@user.UserName" required /></div>
                             <div class="mb-3"><label class="form-label">Email</label><input type="email" name="Email" class="form-control" value="@user.Email" required /></div>
                             <div class="mb-3"><label class="form-label">Password (kosongkan jika tidak ingin ubah)</label><input type="password" name="Password" class="form-control" /></div>
                             <div class="mb-3"><label class="form-label">Bio</label><textarea name="Bio" class="form-control">@user.Bio</textarea></div>
                             <div class="mb-3"><label class="form-label">Status</label>
                                 <select name="IsActive" class="form-select">
-                                    @if (user.IsActive) {
-                                        <option value="true" selected>Active</option>
-                                        <option value="false">Inactive</option>
-                                    } else {
-                                        <option value="true">Active</option>
-                                        <option value="false" selected>Inactive</option>
-                                    }
+                                    <option value="true" selected="@(user.IsActive)">Active</option>
+                                    <option value="false" selected="@(!user.IsActive)">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="mb-3"><label class="form-label">Visibility</label>
+                                <select name="IsPublic" class="form-select">
+                                    <option value="true" selected="@(user.IsPublic)">Public</option>
+                                    <option value="false" selected="@(!user.IsPublic)">Private</option>
                                 </select>
                             </div>
                         </div>
@@ -125,24 +125,37 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Semua form CRUD pakai AJAX
-    $(document).on("submit", ".ajax-form", function (e) {
-        e.preventDefault();
-        var form = $(this);
-        $.ajax({
-            url: form.attr("action"),
-            type: "POST",
-            data: form.serialize(),
-            success: function (result) {
-                $("#userTableBody").html(result);
-                $(".modal").modal("hide");
-                form[0].reset();
-            },
-            error: function () {
-                alert("Terjadi kesalahan, coba lagi!");
+   $(document).on("submit", ".ajax-form", function (e) {
+    e.preventDefault();
+    var form = $(this);
+    var modal = form.closest(".modal"); // ambil modal aktif
+    $.ajax({
+        url: form.attr("action"),
+        type: "POST",
+        data: form.serialize(),
+        success: function (result) {
+            $("#userTableBody").html(result);
+
+            // Tutup modal aktif
+            if (modal.length) {
+                modal.modal("hide");
             }
-        });
+
+            // Hapus backdrop sisa kalau ada
+            $(".modal-backdrop").remove();
+            $("body").removeClass("modal-open");
+
+            // Reset form hanya untuk modal create
+            if (form.attr("action").includes("CreateUser")) {
+                form[0].reset();
+            }
+        },
+        error: function (xhr) {
+            alert("Terjadi kesalahan: " + xhr.responseText);
+        }
     });
+    return false;
+});
 
     // Pencarian user
     document.getElementById("searchInput").addEventListener("keyup", function () {
@@ -150,26 +163,6 @@
         var rows = document.querySelectorAll("#userTable tbody tr");
         rows.forEach(function (row) {
             row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-        });
-    });
-
-    // Filter status Active / Inactive
-    document.getElementById("statusFilter").addEventListener("change", function () {
-        var filter = this.value;
-        var rows = document.querySelectorAll("#userTable tbody tr");
-        rows.forEach(function (row) {
-            var statusCell = row.querySelector("td:nth-child(5)");
-            if (!statusCell) return;
-            var status = statusCell.innerText.toLowerCase();
-            if (filter === "all") {
-                row.style.display = "";
-            } else if (filter === "active" && status.includes("active")) {
-                row.style.display = "";
-            } else if (filter === "inactive" && status.includes("inactive")) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-            }
         });
     });
 </script>
