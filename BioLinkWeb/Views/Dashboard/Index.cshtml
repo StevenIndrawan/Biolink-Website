@@ -21,8 +21,17 @@
         </button>
     </div> 
 
-    <div class="mb-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari user...">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari user...">
+        </div>
+        <div class="col-md-3">
+            <select id="statusFilter" class="form-select">
+                <option value="all">Semua Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 rounded-3">
@@ -116,7 +125,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    // Semua form CRUD user pakai AJAX stay di halaman dashboard
+    // Semua form CRUD pakai AJAX
     $(document).on("submit", ".ajax-form", function (e) {
         e.preventDefault();
         var form = $(this);
@@ -141,6 +150,26 @@
         var rows = document.querySelectorAll("#userTable tbody tr");
         rows.forEach(function (row) {
             row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
+        });
+    });
+
+    // Filter status Active / Inactive
+    document.getElementById("statusFilter").addEventListener("change", function () {
+        var filter = this.value;
+        var rows = document.querySelectorAll("#userTable tbody tr");
+        rows.forEach(function (row) {
+            var statusCell = row.querySelector("td:nth-child(5)");
+            if (!statusCell) return;
+            var status = statusCell.innerText.toLowerCase();
+            if (filter === "all") {
+                row.style.display = "";
+            } else if (filter === "active" && status.includes("active")) {
+                row.style.display = "";
+            } else if (filter === "inactive" && status.includes("inactive")) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
         });
     });
 </script>

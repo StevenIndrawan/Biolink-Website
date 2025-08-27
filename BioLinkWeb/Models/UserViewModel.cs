@@ -10,5 +10,6 @@ namespace BioLinkWeb.Models
         public bool IsActive { get; set; }
         public string Username => UserName;
         public string Password { get; set; }
+        public string ProfileImageUrl { get; set; }
     }
 }

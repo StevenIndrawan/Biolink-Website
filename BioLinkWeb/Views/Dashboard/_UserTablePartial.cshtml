@@ -1,42 +1,89 @@
 @model IEnumerable<BioLinkWeb.Models.UserViewModel>
 
-@if (Model != null && Model.Any())
-{
-    foreach (var user in Model)
-    {
-        <tr>
-            <td>@user.DisplayName</td>
-            <td>@user.UserName</td>
-            <td>@user.Email</td>
-            <td>@user.Bio</td>
-            <td>
-                @if (user.IsActive)
-                {
-                    <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Active</span>
-                }
-                else
-                {
-                    <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Inactive</span>
-                }
-            </td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#settingsModal-@user.Id">
-                    <i class="bi bi-gear-fill"></i> Edit
-                </button>
-                <form asp-controller="Dashboard" asp-action="DeleteUser" method="post" class="d-inline ajax-form">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" value="@user.Id" />
-                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Yakin ingin menghapus user ini?');">
-                        <i class="bi bi-trash"></i> Hapus
-                    </button>
-                </form>
-            </td>
-        </tr>
-    }
-}
-else
+@foreach (var u in Model)
 {
     <tr>
-        <td colspan="6" class="text-center text-muted">Belum ada data user</td>
+        <td>@u.DisplayName</td>
+        <td>@u.UserName</td>
+        <td>@u.Email</td>
+        <td>@u.Bio</td>
+        <td>
+            @if (u.IsActive)
+            {
+                <span class="badge bg-success">Active</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Inactive</span>
+            }
+        </td>
+        <td class="text-center">
+            <!-- Tombol Edit -->
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#settingsModal-@u.Id">
+                <i class="bi bi-pencil"></i> Edit
+            </button>
+
+            <!-- Tombol Hapus -->
+            <form asp-action="DeleteUser" asp-controller="Dashboard" method="post" class="d-inline ajax-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@u.Id" />
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Yakin ingin hapus user ini?')">
+                    <i class="bi bi-trash"></i> Hapus
+                </button>
+            </form>
+        </td>
     </tr>
+
+    <!-- Modal Edit User -->
+    <div class="modal fade" id="settingsModal-@u.Id" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form method="post" asp-controller="Dashboard" asp-action="UpdateUser" class="ajax-form">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit User - @u.DisplayName</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="Id" value="@u.Id" />
+                        <div class="mb-3">
+                            <label class="form-label">Display Name</label>
+                            <input type="text" name="DisplayName" class="form-control" value="@u.DisplayName" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="Email" class="form-control" value="@u.Email" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password (kosongkan jika tidak ingin ubah)</label>
+                            <input type="password" name="Password" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea name="Bio" class="form-control">@u.Bio</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select name="IsActive" class="form-select">
+                                @if (u.IsActive)
+                                {
+                                    <option value="true" selected>Active</option>
+                                    <option value="false">Inactive</option>
+                                }
+                                else
+                                {
+                                    <option value="true">Active</option>
+                                    <option value="false" selected>Inactive</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 }

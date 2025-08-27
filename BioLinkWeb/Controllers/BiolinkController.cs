@@ -21,7 +21,37 @@ namespace BioLinkWeb.Controllers
             _userManager = userManager;
             _context = context;
         }
+        
+        // =====================================================
+        // 🔹 Search User: /{Search}
+        // =====================================================
+        [AllowAnonymous]
+        [HttpGet("Search")]
+        public async Task<IActionResult> Search(string? q)
+        {
+            var users = _userManager.Users
+                .Where(u => u.IsPublic) // hanya tampilkan user yang public
+                .AsQueryable();
 
+            if (!string.IsNullOrEmpty(q))
+            {
+                users = users.Where(u => u.UserName.Contains(q) || u.DisplayName.Contains(q));
+            }
+
+            var result = await users
+                .OrderBy(u => u.DisplayName)
+                .Select(u => new UserViewModel
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    DisplayName = u.DisplayName,
+                    Bio = u.Bio,
+                    ProfileImageUrl = string.IsNullOrEmpty(u.ProfileImageUrl) ? "/images/profile.png" : u.ProfileImageUrl
+                })
+                .ToListAsync();
+
+            return View(result); // Views/Biolink/Search.cshtml
+        }
         // =====================================================
         // 🔹 Public Profile: /{username}
         // =====================================================
@@ -36,11 +66,22 @@ namespace BioLinkWeb.Controllers
                 .Include(u => u.Links)
                 .FirstOrDefaultAsync(u => u.UserName == username);
 
-            if (user == null || !user.IsPublic)
+            if (user == null)
                 return NotFound();
+
+            // kalau private, hanya pemilik yang bisa lihat
+            if (!user.IsPublic)
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null || currentUser.Id != user.Id)
+                {
+                    return NotFound();
+                }
+            }
 
             return View(user); // Views/Biolink/Index.cshtml
         }
+
 
         // =====================================================
         // 🔹 GET Settings: /Biolink/Settings

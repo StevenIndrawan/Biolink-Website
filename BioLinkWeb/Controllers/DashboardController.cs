@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace BioLinkWeb.Controllers
 {
-    [Authorize (Roles = "Admin")] // hanya bisa diakses setelah login
+    [Authorize(Roles = "Admin")] 
     public class DashboardController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -36,77 +36,114 @@ namespace BioLinkWeb.Controllers
                 })
                 .ToListAsync();
 
-            return View(users); // cocok dengan @model IEnumerable<UserViewModel>
+            return View(users); 
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateUser(UserViewModel model)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> CreateUser(UserViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        var usersInvalid = await GetUsers();
+        return PartialView("_UserTablePartial", usersInvalid);
+    }
+
+    var user = new ApplicationUser
+    {
+        UserName = model.UserName,
+        DisplayName = model.DisplayName,
+        Email = model.Email,
+        Bio = model.Bio,
+        IsPublic = model.IsActive
+    };
+
+    var result = await _userManager.CreateAsync(user, model.Password);
+    if (!result.Succeeded)
+    {
+        TempData["Error"] = "Gagal membuat user baru.";
+        var usersError = await GetUsers();
+        return PartialView("_UserTablePartial", usersError);
+    }
+
+    var users = await GetUsers();
+    return PartialView("_UserTablePartial", users);
+}
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateUser(UserViewModel model)
+    {
+        var user = await _userManager.FindByIdAsync(model.Id);
+        if (user == null)
         {
-            if (!ModelState.IsValid)
-                return RedirectToAction("Index");
-
-            var user = new ApplicationUser
-            {
-                UserName = model.UserName,
-                DisplayName = model.DisplayName,
-                Email = model.Email,
-                Bio = model.Bio,
-                IsPublic = model.IsActive
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-            {
-                // bisa kasih TempData error message
-                return RedirectToAction("Index");
-            }
-
-            return RedirectToAction("Index"); // balik ke dashboard, tidak ke login
+            TempData["Error"] = "User tidak ditemukan.";
+            var usersError = await GetUsers();
+            return PartialView("_UserTablePartial", usersError);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateUser(UserViewModel model)
+        user.DisplayName = model.DisplayName;
+        user.Email = model.Email;
+        user.Bio = model.Bio;
+        user.IsPublic = model.IsActive;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
         {
-            var user = await _userManager.FindByIdAsync(model.Id);
-            if (user == null) return NotFound();
-
-            user.DisplayName = model.DisplayName;
-            user.Email = model.Email;
-            user.Bio = model.Bio;
-            user.IsPublic = model.IsActive;
-
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
-            {
-                return RedirectToAction("Index");
-            }
-
-            // update password jika diisi
-            if (!string.IsNullOrEmpty(model.Password))
-            {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                await _userManager.ResetPasswordAsync(user, token, model.Password);
-            }
-
-            return RedirectToAction("Index");
+            TempData["Error"] = "Gagal memperbarui user.";
+            var usersError = await GetUsers();
+            return PartialView("_UserTablePartial", usersError);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteUser(string id)
+        if (!string.IsNullOrEmpty(model.Password))
         {
-            var user = await _userManager.FindByIdAsync(id);
-            if (user == null) return NotFound();
-
-            var result = await _userManager.DeleteAsync(user);
-            if (!result.Succeeded)
-            {
-                return RedirectToAction("Index");
-            }
-
-            return RedirectToAction("Index");
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _userManager.ResetPasswordAsync(user, token, model.Password);
         }
+
+        var users = await GetUsers();
+        return PartialView("_UserTablePartial", users);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteUser(string id)
+    {
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
+        {
+            TempData["Error"] = "User tidak ditemukan.";
+            var usersError = await GetUsers();
+            return PartialView("_UserTablePartial", usersError);
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            TempData["Error"] = "Gagal menghapus user.";
+            var usersError = await GetUsers();
+            return PartialView("_UserTablePartial", usersError);
+        }
+
+        var users = await GetUsers();
+        return PartialView("_UserTablePartial", users);
+    }
+
+    /// helper
+    private async Task<List<UserViewModel>> GetUsers()
+    {
+        return await _context.Users
+            .Select(u => new UserViewModel
+            {
+                Id = u.Id,
+                UserName = u.UserName,
+                DisplayName = u.DisplayName,
+                Email = u.Email,
+                Bio = u.Bio,
+                IsActive = u.IsPublic
+            })
+            .ToListAsync();
+    }
+
     }
 }

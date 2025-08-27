@@ -81,6 +81,12 @@
             font-size: 16px; font-weight: 500; color: white;
             transition: all 0.25s ease;
         }
+        .actions a.search {
+            background: #9b59b6;
+        }
+        .actions a.search:hover {
+            background: #8e44ad;
+        }
         .links a:hover { background: rgba(255,255,255,0.35); color: #000; transform: translateY(-3px); }
         .links a span.icon { margin-right: 12px; font-size: 18px; display:flex; }
         .footer { font-size: 12px; color: #ddd; margin-top: 20px; }
@@ -139,6 +145,7 @@
             {
                 <a href="/Dashboard/Index">📊 Dashboard</a>
             }
+            <a asp-controller="Biolink" asp-action="Search" class="search">🔍 Cari User</a>
         </div>
     </div>
 </body>
